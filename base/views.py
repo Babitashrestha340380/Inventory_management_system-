@@ -7,9 +7,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from django.contrib.auth.models import User
 
-from .models import Product, Stock, StockTransfer, PurchaseOrder, DropShipment, DemandForecast
+from .models import GoodsReceivedNote, Product, SalesInvoice, SalesOrder, Stock, StockTransfer, PurchaseOrder, DropShipment, DemandForecast
 from .serializers import (
+    GoodsReceivedNoteSerializer,
     ProductSerializer,
+    SalesInvoiceSerializer,
+    SalesOrderSerializer,
     StockSerializer,
     StockTransferSerializer,
     PurchaseOrderSerializer,
@@ -68,7 +71,8 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all()
     serializer_class = PurchaseOrderSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['product', 'supplier', 'received', 'expected_date']
+    filterset_fields = ['product', 'supplier', 'status', 'expected_date']  # use 'status' instead of 'received'
+
 
 # -------------------------------
 # DROPSHIP
@@ -112,3 +116,24 @@ class RegisterView(generics.CreateAPIView):
 # -------------------------------
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
+
+
+class GoodsReceivedNoteViewSet(viewsets.ModelViewSet):
+    queryset = GoodsReceivedNote.objects.all()
+    serializer_class = GoodsReceivedNoteSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['purchase_order', 'received_date']
+
+
+class SalesOrderViewSet(viewsets.ModelViewSet):
+    queryset = SalesOrder.objects.all()
+    serializer_class = SalesOrderSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['product', 'customer_name', 'status', 'order_date']
+
+
+class SalesInvoiceViewSet(viewsets.ModelViewSet):
+    queryset = SalesInvoice.objects.all()
+    serializer_class = SalesInvoiceSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['sales_order', 'invoice_date']

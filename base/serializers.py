@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Product, Stock, StockTransfer, PurchaseOrder, DropShipment, DemandForecast
+from .models import GoodsReceivedNote, Product, SalesInvoice, SalesOrder, Stock, StockTransfer, PurchaseOrder, DropShipment, DemandForecast
 
 # -------------------------------
 # PRODUCT SERIALIZER
@@ -38,7 +38,15 @@ class StockTransferSerializer(serializers.ModelSerializer):
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrder
-        fields = ['id', 'product', 'quantity', 'supplier', 'expected_date', 'received']
+        fields = [
+            'id',
+            'product',
+            'quantity',
+            'supplier',
+            'expected_date',
+            'status'
+        ]
+
 
 
 # -------------------------------
@@ -97,3 +105,18 @@ class LoginSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['role'] = user.groups.first().name if user.groups.exists() else None
         return token
+
+class GoodsReceivedNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoodsReceivedNote
+        fields = ['id', 'purchase_order', 'received_quantity', 'received_date']
+
+class SalesOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesOrder
+        fields = ['id', 'product', 'quantity', 'customer_name', 'status', 'order_date']
+
+class SalesInvoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesInvoice
+        fields = ['id', 'sales_order', 'quantity', 'invoice_date']
